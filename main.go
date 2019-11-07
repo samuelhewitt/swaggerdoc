@@ -18,6 +18,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const apiDir = "api"
+
 func main() {
 	cmdline.AppName = "Swagger Doc"
 	cmdline.CopyrightYears = "2019"
@@ -36,7 +38,7 @@ func main() {
 }
 
 func generate(searchDir, mainAPIFile, destDir string) error {
-	if err := os.MkdirAll(destDir, 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(destDir, apiDir), 0755); err != nil {
 		return errs.Wrap(err)
 	}
 	log.SetOutput(ioutil.Discard) // Disable console output from the library that we don't want
@@ -84,7 +86,7 @@ func generate(searchDir, mainAPIFile, destDir string) error {
 		if !exists {
 			return errs.Newf("unable to locate %s", name)
 		}
-		if err = ioutil.WriteFile(filepath.Join(destDir, name), data, 0644); err != nil {
+		if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, name), data, 0644); err != nil {
 			return errs.Wrap(err)
 		}
 	}
@@ -92,7 +94,7 @@ func generate(searchDir, mainAPIFile, destDir string) error {
 	if !exists {
 		return errs.New("unable to locate index.html")
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, "index.html"), bytes.Replace(indexFile, []byte("SPEC"), jData, 1), 0644); err != nil {
+	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, "index.html"), bytes.Replace(indexFile, []byte("SPEC"), jData, 1), 0644); err != nil {
 		return errs.Wrap(err)
 	}
 	return nil
