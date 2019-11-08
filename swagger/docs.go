@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/richardwilkes/toolbox/xio/fs/embedded"
-
-	"gopkg.in/yaml.v2"
 )
 
 type docsHandler struct {
@@ -25,11 +23,11 @@ type docsHandler struct {
 func NewDocsHandler(fs embedded.FileSystem, host string) http.Handler {
 	dh := &docsHandler{fs: fs, when: time.Now()}
 	if indexFile, exists := fs.ContentAsBytes("/api/index_tmpl.html"); exists {
-		if yData, exists2 := fs.ContentAsBytes("/swagger.yaml"); exists2 {
+		if jData, exists2 := fs.ContentAsBytes("/swagger.json"); exists2 {
 			var spec map[string]interface{}
-			if err := yaml.Unmarshal(yData, &spec); err == nil {
+			if err := json.Unmarshal(jData, &spec); err == nil {
 				spec["host"] = host
-				if jData, jErr := json.Marshal(spec); jErr == nil {
+				if jData, err = json.Marshal(spec); err == nil {
 					dh.revised = bytes.Replace(indexFile, []byte("SPEC"), jData, 1)
 				}
 			}
@@ -39,7 +37,7 @@ func NewDocsHandler(fs embedded.FileSystem, host string) http.Handler {
 }
 
 func (dh *docsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if dh.revised != nil && req.URL.Path == "/api/index.html" {
+	if dh.revised != nil && (req.URL.Path == "/api/" || req.URL.Path == "/api/index.html") {
 		http.ServeContent(w, req, req.URL.Path, dh.when, bytes.NewReader(dh.revised))
 	} else {
 		http.FileServer(dh.fs).ServeHTTP(w, req)
