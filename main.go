@@ -76,6 +76,7 @@ func generate(searchDir, mainAPIFile, destDir string) error {
 	for _, name := range []string{
 		"favicon-16x16.png",
 		"favicon-32x32.png",
+		"index_tmpl.html",
 		"oauth2-redirect.html",
 		"swagger-ui.css",
 		"swagger-ui.js",
@@ -90,7 +91,7 @@ func generate(searchDir, mainAPIFile, destDir string) error {
 			return errs.Wrap(err)
 		}
 	}
-	indexFile, exists := fs.ContentAsBytes("index.html")
+	indexFile, exists := fs.ContentAsBytes("index_tmpl.html")
 	if !exists {
 		return errs.New("unable to locate index.html")
 	}
