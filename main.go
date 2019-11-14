@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log" //nolint:depguard
 	"os"
@@ -24,7 +25,13 @@ func main() {
 	cmdline.AppName = "Swagger Doc"
 	cmdline.CopyrightYears = "2019"
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
-	cmdline.AppVersion = "1.0"
+
+	efs, err := embedded.NewEFSFromEmbeddedZip()
+	if err != nil {
+		fmt.Printf("embedded file system is not present, please rebuild %s\n", cmdline.AppCmdName)
+		atexit.Exit(1)
+	}
+
 	cl := cmdline.New(true)
 	searchDir := "."
 	mainAPIFile := "main.go"
@@ -33,11 +40,11 @@ func main() {
 	cl.NewStringOption(&mainAPIFile).SetSingle('m').SetName("main").SetArg("file").SetUsage("The Go file to search for the main documentation directives")
 	cl.NewStringOption(&destDir).SetSingle('d').SetName("dest").SetArg("dir").SetUsage("The destination directory to write the documentation files to")
 	cl.Parse(os.Args[1:])
-	jot.FatalIfErr(generate(searchDir, mainAPIFile, destDir))
+	jot.FatalIfErr(generate(efs, searchDir, mainAPIFile, destDir))
 	atexit.Exit(0)
 }
 
-func generate(searchDir, mainAPIFile, destDir string) error {
+func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir string) error {
 	if err := os.MkdirAll(filepath.Join(destDir, apiDir), 0755); err != nil {
 		return errs.Wrap(err)
 	}
@@ -67,10 +74,6 @@ func generate(searchDir, mainAPIFile, destDir string) error {
 	}
 	if err = ioutil.WriteFile(filepath.Join(destDir, "swagger.yaml"), yData, 0644); err != nil {
 		return errs.Wrap(err)
-	}
-	efs, efsErr := embedded.NewEFSFromEmbeddedZip()
-	if efsErr != nil {
-		return errs.Wrap(efsErr)
 	}
 	fs := efs.PrimaryFileSystem()
 	for _, name := range []string{
