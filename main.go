@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log" //nolint:depguard
+	"log" //nolint:depguard // needed so we can disable unwanted logging output from a third-party library
 	"os"
 	"path/filepath"
 
