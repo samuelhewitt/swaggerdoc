@@ -23,7 +23,7 @@ type docsHandler struct {
 func NewDocsHandler(fs embedded.FileSystem, host string) http.Handler {
 	dh := &docsHandler{fs: fs, when: time.Now()}
 	if indexFile, exists := fs.ContentAsBytes("/api/index_tmpl.html"); exists {
-		if jData, exists2 := fs.ContentAsBytes("/swagger.json"); exists2 {
+		if jData, exists2 := fs.ContentAsBytes("/api/swagger.json"); exists2 {
 			var spec map[string]interface{}
 			if err := json.Unmarshal(jData, &spec); err == nil {
 				spec["host"] = host

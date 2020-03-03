@@ -57,7 +57,7 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir string) error {
 	if err != nil {
 		return errs.Wrap(err)
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, "swagger.json"), jData, 0644); err != nil {
+	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, "swagger.json"), jData, 0644); err != nil {
 		return errs.Wrap(err)
 	}
 	// Since the object that parser.GetSwagger() returned has no yaml keys
@@ -72,7 +72,7 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir string) error {
 	if yErr != nil {
 		return errs.Wrap(yErr)
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, "swagger.yaml"), yData, 0644); err != nil {
+	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, "swagger.yaml"), yData, 0644); err != nil {
 		return errs.Wrap(err)
 	}
 	fs := efs.PrimaryFileSystem()
