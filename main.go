@@ -60,7 +60,7 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName strin
 	if err != nil {
 		return errs.Wrap(err)
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName + ".json"), jData, 0644); err != nil {
+	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".json"), jData, 0644); err != nil {
 		return errs.Wrap(err)
 	}
 	// Since the object that parser.GetSwagger() returned has no yaml keys
@@ -94,8 +94,8 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName strin
 			return errs.Newf("unable to locate %s", name)
 		}
 		if name == "index.html" {
-			data = bytes.Replace(data, []byte("./swagger."), []byte("./" + baseName + "."), 2)
-			data = bytes.Replace(data, []byte(" Swagger "), []byte(" " + txt.ToCamelCase(baseName) + " "), 2)
+			data = bytes.Replace(data, []byte("./swagger."), []byte("./"+baseName+"."), 2)
+			data = bytes.Replace(data, []byte(" Swagger "), []byte(" "+txt.ToCamelCase(baseName)+" "), 2)
 		}
 		if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, name), data, 0644); err != nil {
 			return errs.Wrap(err)
