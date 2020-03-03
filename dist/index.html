@@ -23,21 +23,26 @@
 </head>
 <body>
   <div id="swagger-ui"></div>
-  <ul>
-    <li><a href="./swagger.yaml">swagger.yaml</a></li>
-    <li><a href="./swagger.json">swagger.json</a></li>
-  </ul>
   <script src="./swagger-ui-bundle.js"> </script>
   <script src="./swagger-ui-standalone-preset.js"> </script>
   <script>
     window.onload = function() {
       const ui = SwaggerUIBundle({
-        spec: SPEC,
+        urls: [
+          {
+            url: "./swagger.yaml",
+            name: "YAML Swagger Definition File"
+          },
+          {
+            url: "./swagger.json",
+            name: "JSON Swagger Definition File"
+          }
+        ],
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
           SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset.slice(1)
+          SwaggerUIStandalonePreset
         ],
         plugins: [
           SwaggerUIBundle.plugins.DownloadUrl

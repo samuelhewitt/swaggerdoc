@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-VERSION=1.1.1
+VERSION=1.2.0
 
 PRIMARY_GOPATH=`echo $GOPATH | sed -e 's/:.*//'`
 if [ -z $PRIMARY_GOPATH ]; then
