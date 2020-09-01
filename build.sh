@@ -21,7 +21,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -h|--help)
     echo "$0 [options]"
     echo "  -l, --skip-linters   Skip linters"
-    echo "  -o, --output <path>  The output binary (defaults to \"$DEFAULT_OUTPUT_PATHT\")"
+    echo "  -o, --output <path>  The output binary (defaults to \"$DEFAULT_OUTPUT_PATH\")"
     echo "  -h, --help           This help text"
     exit 0
     ;;
