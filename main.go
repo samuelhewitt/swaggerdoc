@@ -36,23 +36,25 @@ func main() {
 	mainAPIFile := "main.go"
 	destDir := "docs"
 	baseName := "swagger"
+	maxDependencyDepth := 2
 	cl.NewStringOption(&searchDir).SetSingle('s').SetName("search").SetArg("dir").SetUsage("The directory root to search for documentation directives")
 	cl.NewStringOption(&mainAPIFile).SetSingle('m').SetName("main").SetArg("file").SetUsage("The Go file to search for the main documentation directives")
-	cl.NewStringOption(&destDir).SetSingle('d').SetName("dest").SetArg("dir").SetUsage("The destination directory to write the documentation files to")
+	cl.NewStringOption(&destDir).SetSingle('o').SetName("output").SetArg("dir").SetUsage("The destination directory to write the documentation files to")
 	cl.NewStringOption(&baseName).SetSingle('n').SetName("name").SetArg("name").SetUsage("The base name to use for the definition files")
+	cl.NewIntOption(&maxDependencyDepth).SetSingle('d').SetName("depth").SetUsage("The maximum depth to resolve dependencies; use 0 for unlimited")
 	cl.Parse(os.Args[1:])
-	jot.FatalIfErr(generate(efs, searchDir, mainAPIFile, destDir, baseName))
+	jot.FatalIfErr(generate(efs, searchDir, mainAPIFile, destDir, baseName, maxDependencyDepth))
 	atexit.Exit(0)
 }
 
-func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName string) error {
+func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName string, maxDependencyDepth int) error {
 	if err := os.MkdirAll(filepath.Join(destDir, apiDir), 0755); err != nil {
 		return errs.Wrap(err)
 	}
 	parser := swag.NewParser()
 	parser.ParseDependency = true
 	parser.ParseInternal = true
-	if err := parser.ParseAPI(searchDir, mainAPIFile, 0); err != nil {
+	if err := parser.ParseAPI(searchDir, mainAPIFile, maxDependencyDepth); err != nil {
 		return errs.Wrap(err)
 	}
 	jData, err := json.Marshal(parser.GetSwagger())
