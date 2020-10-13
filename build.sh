@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-VERSION=1.2.3
+VERSION=1.3.0
 
 if [ -z $GOPATH ]; then
   GOPATH="$HOME/go"

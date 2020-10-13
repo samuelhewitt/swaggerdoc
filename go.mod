@@ -3,7 +3,8 @@ module github.com/richardwilkes/swaggerdoc
 go 1.14
 
 require (
-	github.com/richardwilkes/toolbox v1.29.0
-	github.com/swaggo/swag v1.6.7
+	github.com/KyleBanks/depth v1.2.1
+	github.com/go-openapi/spec v0.19.9
+	github.com/richardwilkes/toolbox v1.30.0
 	gopkg.in/yaml.v2 v2.3.0
 )

@@ -5,18 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log" //nolint:depguard // needed so we can disable unwanted logging output from a third-party library
 	"os"
 	"path/filepath"
 
+	"github.com/richardwilkes/swaggerdoc/swag"
 	"github.com/richardwilkes/toolbox/atexit"
 	"github.com/richardwilkes/toolbox/cmdline"
 	"github.com/richardwilkes/toolbox/errs"
 	"github.com/richardwilkes/toolbox/log/jot"
 	"github.com/richardwilkes/toolbox/txt"
 	"github.com/richardwilkes/toolbox/xio/fs/embedded"
-	"github.com/swaggo/swag"
-
 	"gopkg.in/yaml.v2"
 )
 
@@ -51,16 +49,15 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName strin
 	if err := os.MkdirAll(filepath.Join(destDir, apiDir), 0755); err != nil {
 		return errs.Wrap(err)
 	}
-	log.SetOutput(ioutil.Discard) // Disable console output from the library that we don't want
-	parser := swag.New()
-	if err := parser.ParseAPI(searchDir, mainAPIFile); err != nil {
+	parser := swag.NewParser()
+	if err := parser.ParseAPI(searchDir, mainAPIFile, 0); err != nil {
 		return errs.Wrap(err)
 	}
 	jData, err := json.Marshal(parser.GetSwagger())
 	if err != nil {
 		return errs.Wrap(err)
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".json"), jData, 0644); err != nil {
+	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".json"), jData, 0644); err != nil { //nolint:gosec // Yes, I want 0644 permissions
 		return errs.Wrap(err)
 	}
 	// Since the object that parser.GetSwagger() returned has no yaml keys
@@ -75,7 +72,7 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName strin
 	if yErr != nil {
 		return errs.Wrap(yErr)
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".yaml"), yData, 0644); err != nil {
+	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".yaml"), yData, 0644); err != nil { //nolint:gosec // Yes, I want 0644 permissions
 		return errs.Wrap(err)
 	}
 	fs := efs.PrimaryFileSystem()
@@ -97,7 +94,7 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName strin
 			data = bytes.Replace(data, []byte("./swagger."), []byte("./"+baseName+"."), 2)
 			data = bytes.Replace(data, []byte(" Swagger "), []byte(" "+txt.ToCamelCase(baseName)+" "), 2)
 		}
-		if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, name), data, 0644); err != nil {
+		if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, name), data, 0644); err != nil { //nolint:gosec // Yes, I want 0644 permissions
 			return errs.Wrap(err)
 		}
 	}
