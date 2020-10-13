@@ -214,8 +214,7 @@ func initIfEmpty(license *spec.License) *spec.License {
 
 // ParseGeneralAPIInfo parses general api info for given mainAPIFile path
 func (parser *Parser) ParseGeneralAPIInfo(mainAPIFile string) error {
-	fileSet := token.NewFileSet()
-	fileTree, err := goparser.ParseFile(fileSet, mainAPIFile, nil, goparser.ParseComments)
+	fileTree, err := goparser.ParseFile(token.NewFileSet(), mainAPIFile, nil, goparser.ParseComments)
 	if err != nil {
 		return fmt.Errorf("cannot parse source files %s: %s", mainAPIFile, err)
 	}
@@ -1252,7 +1251,11 @@ func (parser *Parser) parseFile(packageDir, path string, src interface{}) error 
 	if strings.HasSuffix(strings.ToLower(path), "_test.go") || filepath.Ext(path) != ".go" {
 		return nil
 	}
-
+	if pd, ok := parser.packages.packages[packageDir]; ok {
+		if _, ok = pd.Files[path]; ok {
+			return nil
+		}
+	}
 	// positions are relative to FileSet
 	astFile, err := goparser.ParseFile(token.NewFileSet(), path, src, goparser.ParseComments)
 	if err != nil {
