@@ -50,6 +50,8 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName strin
 		return errs.Wrap(err)
 	}
 	parser := swag.NewParser()
+	parser.ParseDependency = true
+	parser.ParseInternal = true
 	if err := parser.ParseAPI(searchDir, mainAPIFile, 0); err != nil {
 		return errs.Wrap(err)
 	}

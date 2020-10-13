@@ -713,7 +713,7 @@ func (operation *Operation) ParseResponseComment(commentLine string, astFile *as
 	return nil
 }
 
-// ParseResponseHeaderComment parses comment for gived `response header` comment string.
+// ParseResponseHeaderComment parses comment for given `response header` comment string.
 func (operation *Operation) ParseResponseHeaderComment(commentLine string, astFile *ast.File) error {
 	var matches []string
 
