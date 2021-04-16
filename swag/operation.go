@@ -89,7 +89,7 @@ func (operation *Operation) ParseComment(comment string, astFile *ast.File) erro
 		operation.ParseDescriptionComment(lineRemainder)
 	case "@description.markdown":
 		var commentInfo []byte
-		if commentInfo, err = getMarkdownForTag(lineRemainder, operation.parser.markdownFileDir); err != nil {
+		if commentInfo, err = getMarkdownForTag(lineRemainder, operation.parser.MarkdownFileDir); err != nil {
 			return err
 		}
 		operation.ParseDescriptionComment(string(commentInfo))
