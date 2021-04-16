@@ -81,8 +81,8 @@ type Parser struct {
 	// structStack stores full names of the structures that were already parsed or are being parsed now
 	structStack []*TypeSpecDef
 
-	// MarkdownFileDir holds the path to the folder, where markdown files are stored
-	MarkdownFileDir string
+	// markdownFileDir holds the path to the folder, where markdown files are stored
+	markdownFileDir string
 
 	// codeExampleFilesDir holds path to the folder, where code example files are stored
 	codeExampleFilesDir string
@@ -127,6 +127,13 @@ func NewParser(options ...func(*Parser)) *Parser {
 	}
 
 	return parser
+}
+
+// SetMarkdownFileDirectory sets the directory to search for markdownfiles
+func SetMarkdownFileDirectory(directoryPath string) func(*Parser) {
+	return func(p *Parser) {
+		p.markdownFileDir = directoryPath
+	}
 }
 
 // ParseAPI parses general api info for given searchDir and mainAPIFile
@@ -248,7 +255,7 @@ func (parser *Parser) ParseGeneralAPIInfo(mainAPIFile string) error {
 				}
 				parser.swagger.Info.Description = value
 			case "@description.markdown":
-				commentInfo, err := getMarkdownForTag("api", parser.MarkdownFileDir)
+				commentInfo, err := getMarkdownForTag("api", parser.markdownFileDir)
 				if err != nil {
 					return err
 				}
@@ -285,7 +292,7 @@ func (parser *Parser) ParseGeneralAPIInfo(mainAPIFile string) error {
 				parser.replaceLastTag(tag)
 			case "@tag.description.markdown":
 				tag := parser.swagger.Tags[len(parser.swagger.Tags)-1]
-				commentInfo, err := getMarkdownForTag(tag.TagProps.Name, parser.MarkdownFileDir)
+				commentInfo, err := getMarkdownForTag(tag.TagProps.Name, parser.markdownFileDir)
 				if err != nil {
 					return err
 				}

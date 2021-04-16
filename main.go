@@ -56,9 +56,7 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName, mark
 
 	var parser *swag.Parser
 	if markdownFileDir != "" {
-		parser = swag.NewParser(func(p *swag.Parser) {
-			p.MarkdownFileDir = markdownFileDir
-		})
+		parser = swag.NewParser(swag.SetMarkdownFileDirectory(markdownFileDir))
 	} else {
 		parser = swag.NewParser()
 	}
