@@ -60,12 +60,4 @@ LINK_FLAGS="-X github.com/richardwilkes/toolbox/cmdline.AppVersion=$VERSION"
 LINK_FLAGS="$LINK_FLAGS -X github.com/richardwilkes/toolbox/cmdline.GitVersion=$GIT_VERSION"
 go build -v -ldflags=all="$LINK_FLAGS" -o "$OUTPUT_PATH" .
 
-# Add the zip file system to the binary
-cd dist
-zip --quiet -9 ../dist.zip *
-cd ..
-cat dist.zip >> "$OUTPUT_PATH"
-zip --quiet -A "$OUTPUT_PATH"
-/bin/rm -f dist.zip
-
 echo "Created $OUTPUT_PATH"
