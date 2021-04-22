@@ -9,12 +9,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/richardwilkes/swaggerdoc/swag"
 	"github.com/richardwilkes/toolbox/atexit"
 	"github.com/richardwilkes/toolbox/cmdline"
 	"github.com/richardwilkes/toolbox/errs"
 	"github.com/richardwilkes/toolbox/log/jot"
 	"github.com/richardwilkes/toolbox/txt"
+	"github.com/swaggo/swag"
 	"gopkg.in/yaml.v2"
 )
 
@@ -25,7 +25,7 @@ var efs embed.FS
 
 func main() {
 	cmdline.AppName = "Swagger Doc"
-	cmdline.CopyrightYears = "2019-2020"
+	cmdline.CopyrightYears = "2019-2021"
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
 
 	cl := cmdline.New(true)
@@ -53,9 +53,9 @@ func generate(searchDir, mainAPIFile, destDir, baseName, markdownFileDir string,
 
 	var parser *swag.Parser
 	if markdownFileDir != "" {
-		parser = swag.NewParser(swag.SetMarkdownFileDirectory(markdownFileDir))
+		parser = swag.New(swag.SetMarkdownFileDirectory(markdownFileDir))
 	} else {
-		parser = swag.NewParser()
+		parser = swag.New()
 	}
 
 	parser.ParseDependency = true

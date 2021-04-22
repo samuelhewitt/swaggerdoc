@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-VERSION=1.7.0
+VERSION=1.8.0
 
 if [ -z $GOPATH ]; then
   GOPATH="$HOME/go"
@@ -39,8 +39,7 @@ if [ -z $OUTPUT_PATH ]; then
   OUTPUT_PATH="$DEFAULT_OUTPUT_PATH"
 fi
 
-# Remove old swaggerdoc binary, forcing a rebuild, as we don't want to
-# accidentally add the zip archive to it multiple times
+# Remove old swaggerdoc binary, forcing a rebuild
 /bin/rm -f $OUTPUT_PATH
 
 # Determine the git commit
