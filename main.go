@@ -101,12 +101,7 @@ func generate(searchDir, mainAPIFile, destDir, baseName, markdownFileDir string,
 		"swagger-ui-bundle.js",
 		"swagger-ui-standalone-preset.js",
 	} {
-
-		file, err := subFS.Open(name)
-		if err != nil {
-			return errs.Newf("unable to locate %s", name)
-		}
-		data, err := ioutil.ReadAll(file)
+		data, err := fs.ReadFile(subFS, name)
 		if err != nil {
 			return errs.Newf("unable to read %s", name)
 		}
