@@ -2,8 +2,9 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
-	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -14,22 +15,18 @@ import (
 	"github.com/richardwilkes/toolbox/errs"
 	"github.com/richardwilkes/toolbox/log/jot"
 	"github.com/richardwilkes/toolbox/txt"
-	"github.com/richardwilkes/toolbox/xio/fs/embedded"
 	"gopkg.in/yaml.v2"
 )
 
 const apiDir = "api"
 
+//go:embed dist
+var efs embed.FS
+
 func main() {
 	cmdline.AppName = "Swagger Doc"
 	cmdline.CopyrightYears = "2019-2020"
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
-
-	efs, err := embedded.NewEFSFromEmbeddedZip()
-	if err != nil {
-		fmt.Printf("embedded file system is not present, please rebuild %s\n", cmdline.AppCmdName)
-		atexit.Exit(1)
-	}
 
 	cl := cmdline.New(true)
 	searchDir := "."
@@ -45,11 +42,11 @@ func main() {
 	cl.NewIntOption(&maxDependencyDepth).SetSingle('d').SetName("depth").SetUsage("The maximum depth to resolve dependencies; use 0 for unlimited")
 	cl.NewStringOption(&markdownFileDir).SetSingle('i').SetName("mdincludes").SetArg("dir").SetUsage("The directory root to search for markdown includes")
 	cl.Parse(os.Args[1:])
-	jot.FatalIfErr(generate(efs, searchDir, mainAPIFile, destDir, baseName, markdownFileDir, maxDependencyDepth))
+	jot.FatalIfErr(generate(searchDir, mainAPIFile, destDir, baseName, markdownFileDir, maxDependencyDepth))
 	atexit.Exit(0)
 }
 
-func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName, markdownFileDir string, maxDependencyDepth int) error {
+func generate(searchDir, mainAPIFile, destDir, baseName, markdownFileDir string, maxDependencyDepth int) error {
 	if err := os.MkdirAll(filepath.Join(destDir, apiDir), 0755); err != nil {
 		return errs.Wrap(err)
 	}
@@ -88,7 +85,12 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName, mark
 	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".yaml"), yData, 0644); err != nil { //nolint:gosec // Yes, I want 0644 permissions
 		return errs.Wrap(err)
 	}
-	fs := efs.PrimaryFileSystem()
+
+	var subFS fs.FS
+	if subFS, err = fs.Sub(efs, "dist"); err != nil {
+		return errs.Wrap(err)
+	}
+
 	for _, name := range []string{
 		"favicon-16x16.png",
 		"favicon-32x32.png",
@@ -99,9 +101,9 @@ func generate(efs *embedded.EFS, searchDir, mainAPIFile, destDir, baseName, mark
 		"swagger-ui-bundle.js",
 		"swagger-ui-standalone-preset.js",
 	} {
-		data, exists := fs.ContentAsBytes(name)
-		if !exists {
-			return errs.Newf("unable to locate %s", name)
+		data, err := fs.ReadFile(subFS, name)
+		if err != nil {
+			return errs.Newf("unable to read %s", name)
 		}
 		if name == "index.html" {
 			data = bytes.Replace(data, []byte("./swagger."), []byte("./"+baseName+"."), 2)

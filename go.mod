@@ -1,6 +1,6 @@
 module github.com/richardwilkes/swaggerdoc
 
-go 1.14
+go 1.16
 
 require (
 	github.com/KyleBanks/depth v1.2.1
