@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-VERSION=1.8.2
+VERSION=2.0.0
 
 if [ -z $GOPATH ]; then
   GOPATH="$HOME/go"
@@ -20,7 +20,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     ;;
   -h|--help)
     echo "$0 [options]"
-    echo "  -l, --skip-linters   Skip linters"
     echo "  -o, --output <path>  The output binary (defaults to \"$DEFAULT_OUTPUT_PATH\")"
     echo "  -h, --help           This help text"
     exit 0
@@ -44,7 +43,7 @@ fi
 
 # Determine the git commit
 if which git 2>&1 > /dev/null; then
-  if [ -z "`git status --porcelain`" ]; then
+  if [ -z "$(git status --porcelain)" ]; then
     STATE=clean
   else
     STATE=dirty

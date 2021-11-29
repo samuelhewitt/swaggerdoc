@@ -4,8 +4,7 @@ go 1.17
 
 require (
 	github.com/richardwilkes/toolbox v1.53.0
-	github.com/swaggo/swag v1.7.4
-	gopkg.in/yaml.v2 v2.4.0
+	github.com/swaggo/swag v1.7.6
 )
 
 require (
@@ -20,9 +19,10 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/yookoala/realpath v1.0.0 // indirect
-	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
-	golang.org/x/sys v0.0.0-20211031064116-611d5d643895 // indirect
+	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
+	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.7 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
