@@ -1,8 +1,6 @@
 #!/bin/bash
 set -eo pipefail
 
-VERSION=2.0.0
-
 if [ -z $GOPATH ]; then
   GOPATH="$HOME/go"
 fi
@@ -41,21 +39,7 @@ fi
 # Remove old swaggerdoc binary, forcing a rebuild
 /bin/rm -f $OUTPUT_PATH
 
-# Determine the git commit
-if which git 2>&1 > /dev/null; then
-  if [ -z "$(git status --porcelain)" ]; then
-    STATE=clean
-  else
-    STATE=dirty
-  fi
-  GIT_VERSION=`git rev-parse HEAD`-$STATE
-else
-  GIT_VERSION=Unknown
-fi
-
 # Build the binary
-LINK_FLAGS="-X github.com/richardwilkes/toolbox/cmdline.AppVersion=$VERSION"
-LINK_FLAGS="$LINK_FLAGS -X github.com/richardwilkes/toolbox/cmdline.GitVersion=$GIT_VERSION"
-go build -v -ldflags=all="$LINK_FLAGS" -o "$OUTPUT_PATH" .
+go build -v -o "$OUTPUT_PATH" .
 
 echo "Created $OUTPUT_PATH"
