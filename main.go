@@ -19,7 +19,7 @@ const apiDir = "api"
 
 func main() {
 	cmdline.AppName = "Swagger Doc"
-	cmdline.AppVersion = "2.0.2"
+	cmdline.AppVersion = "2.1.0"
 	cmdline.CopyrightStartYear = "2019"
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
 
