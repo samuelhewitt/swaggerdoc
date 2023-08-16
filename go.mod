@@ -1,4 +1,4 @@
-module github.com/richardwilkes/swaggerdoc
+module github.com/richardwilkes/swaggerdoc/v2
 
 go 1.20
 

@@ -40,6 +40,6 @@ fi
 /bin/rm -f $OUTPUT_PATH
 
 # Build the binary
-go build -v -o "$OUTPUT_PATH" ./v2
+go build -v -o "$OUTPUT_PATH" .
 
 echo "Created $OUTPUT_PATH"
