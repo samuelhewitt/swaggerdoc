@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,7 +18,7 @@ const apiDir = "api"
 
 func main() {
 	cmdline.AppName = "Swagger Doc"
-	cmdline.AppVersion = "2.1.0"
+	cmdline.AppVersion = "2.2.1"
 	cmdline.CopyrightStartYear = "2019"
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
 
@@ -76,7 +75,7 @@ func generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markd
 	if err != nil {
 		return errs.Wrap(err)
 	}
-	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, baseName+".json"), jData, 0o644); err != nil { //nolint:gosec // Yes, I want these permissions
+	if err = os.WriteFile(filepath.Join(destDir, apiDir, baseName+".json"), jData, 0o644); err != nil { //nolint:gosec // Yes, I want these permissions
 		return errs.Wrap(err)
 	}
 	var specURL, extra, js string
@@ -97,7 +96,7 @@ func generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markd
           spec-url="%s.json"`, baseName)
 	}
 	//nolint:gosec // Yes, I want these permissions
-	if err = ioutil.WriteFile(filepath.Join(destDir, apiDir, "index.html"), []byte(fmt.Sprintf(`<!doctype html>
+	if err = os.WriteFile(filepath.Join(destDir, apiDir, "index.html"), []byte(fmt.Sprintf(`<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
