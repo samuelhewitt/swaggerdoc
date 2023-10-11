@@ -7,10 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/richardwilkes/toolbox/atexit"
 	"github.com/richardwilkes/toolbox/cmdline"
 	"github.com/richardwilkes/toolbox/errs"
-	"github.com/richardwilkes/toolbox/log/jot"
 	"github.com/swaggo/swag"
 )
 
@@ -18,7 +16,7 @@ const apiDir = "api"
 
 func main() {
 	cmdline.AppName = "Swagger Doc"
-	cmdline.AppVersion = "2.2.3"
+	cmdline.AppVersion = "2.2.4"
 	cmdline.CopyrightStartYear = "2019"
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
 
@@ -47,8 +45,10 @@ func main() {
 	if title == "" {
 		title = baseName
 	}
-	jot.FatalIfErr(generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markdownFileDir, exclude, maxDependencyDepth, embedded))
-	atexit.Exit(0)
+	if err := generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markdownFileDir, exclude, maxDependencyDepth, embedded); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markdownFileDir string, exclude []string, maxDependencyDepth int, embedded bool) error {
@@ -66,7 +66,7 @@ func generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markd
 
 	parser := swag.New(opts...)
 
-	parser.ParseDependency = true
+	parser.ParseDependency = swag.ParseModels
 	parser.ParseInternal = true
 	if err := parser.ParseAPI(searchDir, mainAPIFile, maxDependencyDepth); err != nil {
 		return errs.Wrap(err)
