@@ -12,8 +12,6 @@ import (
 	"github.com/swaggo/swag"
 )
 
-const apiDir = "api"
-
 func main() {
 	cmdline.AppName = "Swagger Doc"
 	cmdline.AppVersion = "2.2.5"
@@ -21,6 +19,7 @@ func main() {
 	cmdline.CopyrightHolder = "Richard A. Wilkes"
 
 	cl := cmdline.New(true)
+	apiDir := "api"
 	searchDir := "."
 	mainAPIFile := "main.go"
 	destDir := "docs"
@@ -34,6 +33,7 @@ func main() {
 	cl.NewGeneralOption(&searchDir).SetSingle('s').SetName("search").SetArg("dir").SetUsage("The directory root to search for documentation directives")
 	cl.NewGeneralOption(&mainAPIFile).SetSingle('m').SetName("main").SetArg("file").SetUsage("The Go file to search for the main documentation directives")
 	cl.NewGeneralOption(&destDir).SetSingle('o').SetName("output").SetArg("dir").SetUsage("The destination directory to write the documentation files to")
+	cl.NewGeneralOption(&apiDir).SetSingle('a').SetName("api").SetArg("dir").SetUsage("The intermediate directory within the output directory to write the files to")
 	cl.NewGeneralOption(&baseName).SetSingle('n').SetName("name").SetArg("name").SetUsage("The base name to use for the definition files")
 	cl.NewGeneralOption(&maxDependencyDepth).SetSingle('d').SetName("depth").SetUsage("The maximum depth to resolve dependencies; use 0 for unlimited")
 	cl.NewGeneralOption(&markdownFileDir).SetSingle('i').SetName("mdincludes").SetArg("dir").SetUsage("The directory root to search for markdown includes")
@@ -45,13 +45,13 @@ func main() {
 	if title == "" {
 		title = baseName
 	}
-	if err := generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markdownFileDir, exclude, maxDependencyDepth, embedded); err != nil {
+	if err := generate(searchDir, mainAPIFile, destDir, apiDir, baseName, title, serverURL, markdownFileDir, exclude, maxDependencyDepth, embedded); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
-func generate(searchDir, mainAPIFile, destDir, baseName, title, serverURL, markdownFileDir string, exclude []string, maxDependencyDepth int, embedded bool) error {
+func generate(searchDir, mainAPIFile, destDir, apiDir, baseName, title, serverURL, markdownFileDir string, exclude []string, maxDependencyDepth int, embedded bool) error {
 	if err := os.MkdirAll(filepath.Join(destDir, apiDir), 0o755); err != nil { //nolint:gosec // Yes, I want these permissions
 		return errs.Wrap(err)
 	}
